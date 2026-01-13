@@ -7,9 +7,12 @@ return new class extends Migration {
     public function up(){
         Schema::create('roles', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('role');
+            $table->enum('role', ['superadmin', 'admin', 'user'])->default('user');
             $table->timestamps();
         });
     }
-    public function down(){ Schema::dropIfExists('roles'); }
+
+    public function down(){
+        Schema::dropIfExists('roles');
+    }
 };
