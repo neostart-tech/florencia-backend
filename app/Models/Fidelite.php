@@ -11,5 +11,5 @@ class Fidelite extends Model
 
     protected $fillable = ['code','pourcentage','is_active','user_id'];
 
-    public function users(){ return $this->belongsTo(User::class); }
+    public function user(){ return $this->belongsTo(User::class); }
 }

@@ -11,5 +11,5 @@ class Image extends Model
 
     protected $fillable = ['path','article_id'];
 
-    public function articles(){ return $this->belongsTo(Article::class); }
+    public function article(){ return $this->belongsTo(Article::class); }
 }

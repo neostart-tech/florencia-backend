@@ -1,8 +1,16 @@
 <?php
 
+use App\Http\Controllers\admin\AuthController As AuthAdmin;
+use App\Http\Controllers\users\AuthController As AuthUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
+Route::prefix('admin')->group(function () {
+    Route::post('login', [AuthAdmin::class, 'login']);
+});
+
+Route::prefix('user')->group(function () {
+    Route::post('login', [AuthUser::class, 'login']);
+    Route::post('register', [AuthUser::class, 'register']);
+});

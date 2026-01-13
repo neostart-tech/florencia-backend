@@ -11,6 +11,6 @@ class Commande_detail extends Model
 
     protected $fillable = ['quantite','prix_unitaire','article_id','commande_id'];
 
-    public function articles(){ return $this->belongsTo(Article::class); }
-    public function commandes(){ return $this->belongsTo(Commande::class); }
+    public function article(){ return $this->belongsTo(Article::class); }
+    public function commande(){ return $this->belongsTo(Commande::class); }
 }

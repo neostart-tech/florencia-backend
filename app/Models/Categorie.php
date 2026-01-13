@@ -11,7 +11,7 @@ class Categorie extends Model
 
     protected $fillable = ['libelle'];
 
-    public function sous_categories()
+    public function sousCategories()
     {
         return $this->hasMany(Sous_categorie::class);
     }

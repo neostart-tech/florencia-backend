@@ -47,11 +47,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function roles(){ return $this->belongsTo(Role::class); }
+    public function role(){ return $this->belongsTo(Role::class); }
     public function commandes(){ return $this->hasMany(Commande::class); }
     public function reservations(){ return $this->hasMany(Reservation::class); }
     public function adresses(){ return $this->hasMany(Adresse::class); }
-    public function fidelites(){ return $this->hasOne(Fidelite::class); }
+    public function fidelite(){ return $this->hasOne(Fidelite::class); }
 
     public function code_promos()
     {

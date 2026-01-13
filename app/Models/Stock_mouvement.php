@@ -11,5 +11,5 @@ class Stock_mouvement extends Model
 
     protected $fillable = ['type','quantite','commentaire','article_id'];
 
-    public function articles(){ return $this->belongsTo(Article::class); }
+    public function article(){ return $this->belongsTo(Article::class); }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\HasUuid;
 
-class UserCodePromo extends Model
+class Users_code_promo extends Model
 {
     use HasUuid;
 
@@ -15,12 +15,12 @@ class UserCodePromo extends Model
         'promo_id',
     ];
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function code_promos()
+    public function code_promo()
     {
         return $this->belongsTo(Code_promo::class, 'promo_id');
     }
