@@ -11,6 +11,6 @@ class Sous_categorie extends Model
 
     protected $fillable = ['libelle','categorie_id'];
 
-    public function categories(){ return $this->belongsTo(Categorie::class); }
+    public function categorie(){ return $this->belongsTo(Categorie::class); }
     public function articles(){ return $this->hasMany(Article::class); }
 }

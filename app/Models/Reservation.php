@@ -11,8 +11,8 @@ class Reservation extends Model
 
     protected $fillable = ['code','service_id','horaire_id','user_id'];
 
-    public function users(){ return $this->belongsTo(User::class); }
-    public function services(){ return $this->belongsTo(Service::class); }
-    public function horaires(){ return $this->belongsTo(Horaire::class); }
+    public function user(){ return $this->belongsTo(User::class); }
+    public function service(){ return $this->belongsTo(Service::class); }
+    public function horaire(){ return $this->belongsTo(Horaire::class); }
     public function paiements(){ return $this->morphMany(Paiement::class, 'owner'); }
 }

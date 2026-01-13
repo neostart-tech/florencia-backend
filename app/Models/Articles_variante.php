@@ -15,12 +15,12 @@ class Articles_variante extends Model
         'variante_id',
     ];
 
-    public function articles()
+    public function article()
     {
         return $this->belongsTo(Article::class);
     }
 
-    public function variantes()
+    public function variante()
     {
         return $this->belongsTo(Variante::class);
     }

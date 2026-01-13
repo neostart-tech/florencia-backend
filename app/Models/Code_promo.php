@@ -8,8 +8,6 @@ use App\Models\Traits\HasUuid;
 class Code_promo extends Model
 {
     use HasUuid;
-
-    protected $table = 'code_promos';
     protected $fillable = ['date_debut','date_fin','code','pourcentage'];
 
     public function users()

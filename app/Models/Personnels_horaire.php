@@ -15,12 +15,12 @@ class Personnels_horaire extends Model
         'horaire_id',
     ];
 
-    public function personnels()
+    public function personnel()
     {
         return $this->belongsTo(Personnel::class);
     }
 
-    public function horaires()
+    public function horaire()
     {
         return $this->belongsTo(Horaire::class);
     }

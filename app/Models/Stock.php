@@ -11,5 +11,5 @@ class Stock extends Model
 
     protected $fillable = ['quantite','article_id'];
 
-    public function articles(){ return $this->belongsTo(Article::class); }
+    public function article(){ return $this->belongsTo(Article::class); }
 }
