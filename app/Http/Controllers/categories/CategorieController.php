@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Http\Controllers\categories;
+
+use App\Http\Controllers\Controller;
+use App\Models\Categorie;
+use Illuminate\Http\Request;
+use App\Http\Resources\CategorieResource;
+use Illuminate\Support\Facades\Validator;
+
+class CategorieController extends Controller
+{
+    /**
+     * Liste des categories
+     */
+    public function index()
+    {
+        $categories = Categorie::latest()->get();
+        return CategorieResource::collection($categories);
+    }
+
+    /**
+     * Création d'une categorie (admin seulement)
+     */
+    public function store(Request $request)
+    {
+        $user = auth()->user();
+
+        // Vérifier rôle
+        if ($user->role->role === 'user') {
+            return response()->json([
+                'message' => 'Accès refusé'
+            ], 403);
+        }
+
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'libelle' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $categorie = Categorie::create($validator->validated());
+
+        return response()->json([
+            'message' => 'Catégorie créée avec succès',
+            'data' => new CategorieResource($categorie)
+        ], 201);
+    }
+
+    /**
+     * Détails d'une categorie
+     */
+    public function show(Categorie $categorie)
+    {
+        return new CategorieResource($categorie);
+    }
+
+    /**
+     * Mise à jour (admin seulement)
+     */
+    public function update(Request $request, Categorie $categorie)
+    {
+        $user = auth()->user();
+
+        if ($user->role->role === 'user') {
+            return response()->json([
+                'message' => 'Accès refusé'
+            ], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'libelle' => 'sometimes|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $categorie->update($validator->validated());
+
+        return response()->json([
+            'message' => 'Catégorie mise à jour avec succès',
+            'data' => new CategorieResource($categorie)
+        ]);
+    }
+
+    /**
+     * Suppression (admin seulement)
+     */
+    public function destroy(Categorie $categorie)
+    {
+        $user = auth()->user();
+
+        if ($user->role->role === 'user') {
+            return response()->json([
+                'message' => 'Accès refusé'
+            ], 403);
+        }
+
+        $categorie->delete();
+
+        return response()->json([
+            'message' => 'Catégorie supprimée avec succès'
+        ]);
+    }
+}
