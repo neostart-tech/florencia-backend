@@ -20,8 +20,11 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'nom','email','tel',
-        'password','role_id',
+        'nom',
+        'email',
+        'tel',
+        'password',
+        'role_id',
     ];
 
     /**
@@ -47,11 +50,26 @@ class User extends Authenticatable
         ];
     }
 
-    public function role(){ return $this->belongsTo(Role::class); }
-    public function commandes(){ return $this->hasMany(Commande::class); }
-    public function reservations(){ return $this->hasMany(Reservation::class); }
-    public function adresses(){ return $this->hasMany(Adresse::class); }
-    public function fidelite(){ return $this->hasOne(Fidelite::class); }
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+    public function commandes()
+    {
+        return $this->hasMany(Commande::class);
+    }
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+    public function adresses()
+    {
+        return $this->hasMany(Adresse::class);
+    }
+    public function fidelite()
+    {
+        return $this->hasOne(Fidelite::class);
+    }
 
     public function code_promos()
     {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 12 jan. 2026 à 17:29
+-- Généré le : mar. 13 jan. 2026 à 10:50
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -407,10 +407,19 @@ CREATE TABLE `reservations` (
 
 CREATE TABLE `roles` (
   `id` char(36) NOT NULL,
-  `role` varchar(255) NOT NULL,
+  `role` enum('superadmin','admin','user') NOT NULL DEFAULT 'user',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `roles`
+--
+
+INSERT INTO `roles` (`id`, `role`, `created_at`, `updated_at`) VALUES
+('14713277-e009-4521-8667-6513972afbb3', 'admin', '2026-01-13 09:42:02', '2026-01-13 09:42:02'),
+('2c229f6c-4b47-45d6-aca9-9bc1867b9364', 'user', '2026-01-13 09:42:02', '2026-01-13 09:42:02'),
+('ad993946-3268-4ac1-b600-b47c5fec4e85', 'superadmin', '2026-01-13 09:42:02', '2026-01-13 09:42:02');
 
 -- --------------------------------------------------------
 
