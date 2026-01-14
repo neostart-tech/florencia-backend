@@ -47,7 +47,7 @@ class CategorieController extends Controller
         $categorie = Categorie::create($validator->validated());
 
         return response()->json([
-            'message' => 'Variante créée avec succès',
+            'message' => 'Catégorie créée avec succès',
             'data' => new CategorieResource($categorie)
         ], 201);
     }
@@ -86,7 +86,7 @@ class CategorieController extends Controller
         $categorie->update($validator->validated());
 
         return response()->json([
-            'message' => 'Variante mise à jour avec succès',
+            'message' => 'Catégorie mise à jour avec succès',
             'data' => new CategorieResource($categorie)
         ]);
     }
@@ -107,7 +107,7 @@ class CategorieController extends Controller
         $categorie->delete();
 
         return response()->json([
-            'message' => 'Variante supprimée avec succès'
+            'message' => 'Catégorie supprimée avec succès'
         ]);
     }
 }

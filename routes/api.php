@@ -58,9 +58,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/variantes/{variante}', [VarianteController::class, 'update']);
     Route::delete('/variantes/{variante}', [VarianteController::class, 'destroy']);
     // Categories
-    Route::post('/categories', [VarianteController::class, 'store']);
-    Route::put('/categories/{categorie}', [VarianteController::class, 'update']);
-    Route::delete('/categories/{categorie}', [VarianteController::class, 'destroy']);
+    Route::post('/categories', [CategorieController::class, 'store']);
+    Route::put('/categories/{categorie}', [CategorieController::class, 'update']);
+    Route::delete('/categories/{categorie}', [CategorieController::class, 'destroy']);
 
 
 });
