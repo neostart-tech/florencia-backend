@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
 use App\Http\Controllers\categories\CategorieController;
+use App\Http\Controllers\sousCategories\SousCategorieController;
 use App\Http\Controllers\users\AuthController as AuthUser;
 use App\Http\Controllers\variantes\VarianteController;
 use Illuminate\Http\Request;
@@ -36,6 +37,9 @@ Route::get('/variantes/{variante}', [VarianteController::class, 'show']);
 // Categories
 Route::get('/categories', [CategorieController::class, 'index']);
 Route::get('/categories/{categorie}', [CategorieController::class, 'show']);
+// SousCategories
+Route::get('/sous-categories', [SousCategorieController::class, 'index']);
+Route::get('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'show']);
 
 
 // Route::prefix('admin')->group(function () {
@@ -61,6 +65,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategorieController::class, 'store']);
     Route::put('/categories/{categorie}', [CategorieController::class, 'update']);
     Route::delete('/categories/{categorie}', [CategorieController::class, 'destroy']);
+    // SousCategories
+    Route::post('/sous-categories', [SousCategorieController::class, 'store']);
+    Route::put('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'update']);
+    Route::delete('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'destroy']);
 
 
 });
