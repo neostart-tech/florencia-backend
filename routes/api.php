@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
+use App\Http\Controllers\categories\CategorieController;
 use App\Http\Controllers\users\AuthController as AuthUser;
 use App\Http\Controllers\variantes\VarianteController;
 use Illuminate\Http\Request;
@@ -32,6 +33,9 @@ Route::prefix('user')->group(function () {
 // Variantes
 Route::get('/variantes', [VarianteController::class, 'index']);
 Route::get('/variantes/{variante}', [VarianteController::class, 'show']);
+// Categories
+Route::get('/categories', [CategorieController::class, 'index']);
+Route::get('/categories/{categorie}', [CategorieController::class, 'show']);
 
 
 // Route::prefix('admin')->group(function () {
@@ -53,6 +57,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/variantes', [VarianteController::class, 'store']);
     Route::put('/variantes/{variante}', [VarianteController::class, 'update']);
     Route::delete('/variantes/{variante}', [VarianteController::class, 'destroy']);
+    // Categories
+    Route::post('/categories', [VarianteController::class, 'store']);
+    Route::put('/categories/{categorie}', [VarianteController::class, 'update']);
+    Route::delete('/categories/{categorie}', [VarianteController::class, 'destroy']);
 
 
 });
