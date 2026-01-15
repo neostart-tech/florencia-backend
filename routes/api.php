@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
 use App\Http\Controllers\categories\CategorieController;
-use App\Http\Controllers\personnel\PersonnelController;
+use App\Http\Controllers\personnels\PersonnelController;
 use App\Http\Controllers\profil\ProfilController;
 use App\Http\Controllers\sousCategories\SousCategorieController;
 use App\Http\Controllers\adresses\AdresseController;
