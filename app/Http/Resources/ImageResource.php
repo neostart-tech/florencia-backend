@@ -13,7 +13,10 @@ class ImageResource extends JsonResource
             'id' => $this->id,
             'path' => $this->path,
 
-            'article' => $this->whenLoaded('article'),
+            // owner polymorphique
+            'owner_type' => $this->owner_type,
+            'owner_id' => $this->owner_id,
+            'owner' => $this->whenLoaded('owner'),
 
             'created_at' => $this->created_at,
         ];
