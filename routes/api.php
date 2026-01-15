@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
 use App\Http\Controllers\categories\CategorieController;
+use App\Http\Controllers\profil\ProfilController;
 use App\Http\Controllers\sousCategories\SousCategorieController;
 use App\Http\Controllers\users\adresses\AdresseController;
 use App\Http\Controllers\users\AuthController as AuthUser;
@@ -67,6 +68,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sous-categories', [SousCategorieController::class, 'store']);
     Route::put('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'update']);
     Route::delete('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'destroy']);
+    //Profil
+    Route::get('/profil', [ProfilController::class, 'show']);
+    Route::put('/profil', [ProfilController::class, 'update']);
+    Route::put('/profil/password', [ProfilController::class, 'updatePassword']);
+    Route::delete('/profil', [ProfilController::class, 'destroy']);
 
 
 
