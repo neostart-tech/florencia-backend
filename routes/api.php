@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
+use App\Http\Controllers\admin\utilisateurs\UtilisateurController;
 use App\Http\Controllers\categories\CategorieController;
 use App\Http\Controllers\personnels\PersonnelController;
 use App\Http\Controllers\profil\ProfilController;
@@ -86,6 +87,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/personnels/{personnel}', [PersonnelController::class, 'show']);
     Route::put('/personnels/{personnel}', [PersonnelController::class, 'update']);
     Route::delete('/personnels/{personnel}', [PersonnelController::class, 'destroy']);
+    // Gestion des administrateurs (superadmin seulement)
+    Route::get('/admins', [UtilisateurController::class, 'index']);
+    Route::post('/admins', [UtilisateurController::class, 'store']);
+    Route::get('/admins/{user}', [UtilisateurController::class, 'show']);
+    Route::put('/admins/{user}', [UtilisateurController::class, 'update']);
+    Route::delete('/admins/{user}', [UtilisateurController::class, 'destroy']);
+
+    // Transformer un user en admin
+    Route::put('/users/{user}/make-admin', [UtilisateurController::class, 'makeAdmin']);
+
+    // Rétrograder un admin en user
+    Route::put('/users/{user}/make-user', [UtilisateurController::class, 'makeUser']);
 
 
 
