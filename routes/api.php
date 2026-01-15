@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
 use App\Http\Controllers\categories\CategorieController;
 use App\Http\Controllers\sousCategories\SousCategorieController;
+use App\Http\Controllers\users\adresses\AdresseController;
 use App\Http\Controllers\users\AuthController as AuthUser;
 use App\Http\Controllers\variantes\VarianteController;
 use Illuminate\Http\Request;
@@ -46,9 +47,6 @@ Route::get('/sous-categories/{sousCategorie}', [SousCategorieController::class, 
 
 // })->middleware('auth:sanctum');
 
-// Route::prefix('user')->group(function () {
-
-// })->middleware('auth:sanctum');
 
 
 /*
@@ -69,6 +67,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sous-categories', [SousCategorieController::class, 'store']);
     Route::put('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'update']);
     Route::delete('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'destroy']);
+
+
+
+    Route::prefix('user')->group(function () {
+        //Adresses
+        Route::get('/adresses', [AdresseController::class, 'index']);
+        Route::get('/adresses/{adresse}', [AdresseController::class, 'show']);
+        Route::post('/adresses', [AdresseController::class, 'store']);
+        Route::put('/adresses/{adresse}', [AdresseController::class, 'update']);
+        Route::delete('/adresses/{adresse}', [AdresseController::class, 'destroy']);
+
+    });
 
 
 });
