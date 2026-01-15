@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
 use App\Http\Controllers\categories\CategorieController;
+use App\Http\Controllers\personnels\PersonnelController;
+use App\Http\Controllers\profil\ProfilController;
 use App\Http\Controllers\sousCategories\SousCategorieController;
+use App\Http\Controllers\adresses\AdresseController;
 use App\Http\Controllers\users\AuthController as AuthUser;
 use App\Http\Controllers\variantes\VarianteController;
 use Illuminate\Http\Request;
@@ -46,9 +49,6 @@ Route::get('/sous-categories/{sousCategorie}', [SousCategorieController::class, 
 
 // })->middleware('auth:sanctum');
 
-// Route::prefix('user')->group(function () {
-
-// })->middleware('auth:sanctum');
 
 
 /*
@@ -69,6 +69,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sous-categories', [SousCategorieController::class, 'store']);
     Route::put('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'update']);
     Route::delete('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'destroy']);
+    //Profil
+    Route::get('/profil', [ProfilController::class, 'show']);
+    Route::put('/profil', [ProfilController::class, 'update']);
+    Route::put('/profil/password', [ProfilController::class, 'updatePassword']);
+    Route::delete('/profil', [ProfilController::class, 'destroy']);
+    //Adresses
+    Route::get('/adresses', [AdresseController::class, 'index']);
+    Route::get('/adresses/{adresse}', [AdresseController::class, 'show']);
+    Route::post('/adresses', [AdresseController::class, 'store']);
+    Route::put('/adresses/{adresse}', [AdresseController::class, 'update']);
+    Route::delete('/adresses/{adresse}', [AdresseController::class, 'destroy']);
+    //Personnels
+    Route::get('/personnels', [PersonnelController::class, 'index']);
+    Route::post('/personnels', [PersonnelController::class, 'store']);
+    Route::get('/personnels/{personnel}', [PersonnelController::class, 'show']);
+    Route::put('/personnels/{personnel}', [PersonnelController::class, 'update']);
+    Route::delete('/personnels/{personnel}', [PersonnelController::class, 'destroy']);
+
+
+
 
 
 });

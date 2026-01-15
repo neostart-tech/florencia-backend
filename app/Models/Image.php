@@ -9,7 +9,10 @@ class Image extends Model
 {
     use HasUuid;
 
-    protected $fillable = ['path','article_id'];
+    protected $fillable = ['path'];
 
-    public function article(){ return $this->belongsTo(Article::class); }
+    public function owner()
+    {
+        return $this->morphTo();
+    }
 }

@@ -45,7 +45,7 @@ class AuthController extends Controller
         // event(new Registered($user));
 
         return response()->json([
-            'message' => 'Utilisateur créé avec succès. Vérifiez votre email pour confirmer votre compte.',
+            'message' => 'Utilisateur créé avec succès.',
             'user' => new UserResource($user),
         ]);
     }

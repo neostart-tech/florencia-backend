@@ -5,14 +5,18 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(){
+    public function up()
+    {
         Schema::create('images', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('path');
-            $table->foreignUuid('article_id')->constrained('articles');
+            $table->uuidMorphs('owner');
             $table->timestamps();
         });
     }
-    public function down(){ Schema::dropIfExists('images'); }
+    public function down()
+    {
+        Schema::dropIfExists('images');
+    }
 };
 

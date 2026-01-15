@@ -9,10 +9,14 @@ class Service extends Model
 {
     use HasUuid;
 
-    protected $fillable = ['nom','type','duree'];
+    protected $fillable = ['nom', 'type', 'duree'];
 
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
+    }
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'owner');
     }
 }
