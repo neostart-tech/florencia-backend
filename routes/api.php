@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
 use App\Http\Controllers\admin\codepromos\CodePromoController;
+use App\Http\Controllers\admin\fidelites\FideliteController;
 use App\Http\Controllers\admin\utilisateurs\UtilisateurController;
 use App\Http\Controllers\categories\CategorieController;
 use App\Http\Controllers\personnels\PersonnelController;
@@ -124,8 +125,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Gestion des CodePromos (superadmins et admins)
     Route::prefix('/codepromos')->group(function () {
         Route::get('/', [CodePromoController::class, 'index']);
+        Route::get('/{codepromo}', [CodePromoController::class, 'show']);
         Route::post('/', [CodePromoController::class, 'store']);
         Route::delete('/{codepromo}', [CodePromoController::class, 'destroy']);
+    });
+
+    // Gestion des Fidelites (superadmins et admins)
+    Route::prefix('/fidelites')->group(function () {
+        Route::get('/', [FideliteController::class, 'index']);
+        Route::get('/{fidelite}', [FideliteController::class, 'show']);
+        Route::post('/', [FideliteController::class, 'store']);
+        Route::delete('/{fidelite}', [FideliteController::class, 'destroy']);
     });
 
 

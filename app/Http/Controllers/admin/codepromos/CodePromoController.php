@@ -80,6 +80,17 @@ class CodePromoController extends Controller
         ], 201);
     }
 
+    /**
+     * Afficher un code promo
+     */
+    public function show(Code_promo $codepromo)
+    {
+        $this->checkNotUser();
+
+        return new CodePromoResource($codepromo);
+    }
+
+
 
     /**
      * Supprimer un code promo
