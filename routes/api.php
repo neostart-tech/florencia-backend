@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\AuthController as AuthAdmin;
+use App\Http\Controllers\admin\codepromos\CodePromoController;
 use App\Http\Controllers\admin\utilisateurs\UtilisateurController;
 use App\Http\Controllers\categories\CategorieController;
 use App\Http\Controllers\personnels\PersonnelController;
@@ -59,46 +60,73 @@ Route::get('/sous-categories/{sousCategorie}', [SousCategorieController::class, 
 Route::middleware('auth:sanctum')->group(function () {
 
     // Variantes
-    Route::post('/variantes', [VarianteController::class, 'store']);
-    Route::put('/variantes/{variante}', [VarianteController::class, 'update']);
-    Route::delete('/variantes/{variante}', [VarianteController::class, 'destroy']);
+    Route::prefix('/variantes')->group(function () {
+        Route::post('/', [VarianteController::class, 'store']);
+        Route::put('/{variante}', [VarianteController::class, 'update']);
+        Route::delete('/{variante}', [VarianteController::class, 'destroy']);
+    });
+
     // Categories
-    Route::post('/categories', [CategorieController::class, 'store']);
-    Route::put('/categories/{categorie}', [CategorieController::class, 'update']);
-    Route::delete('/categories/{categorie}', [CategorieController::class, 'destroy']);
+    Route::prefix('/categories')->group(function () {
+        Route::post('/', [CategorieController::class, 'store']);
+        Route::put('/{categorie}', [CategorieController::class, 'update']);
+        Route::delete('/{categorie}', [CategorieController::class, 'destroy']);
+    });
+
     // SousCategories
-    Route::post('/sous-categories', [SousCategorieController::class, 'store']);
-    Route::put('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'update']);
-    Route::delete('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'destroy']);
-    //Profil
-    Route::get('/profil', [ProfilController::class, 'show']);
-    Route::put('/profil', [ProfilController::class, 'update']);
-    Route::put('/profil/password', [ProfilController::class, 'updatePassword']);
-    Route::delete('/profil', [ProfilController::class, 'destroy']);
-    //Adresses
-    Route::get('/adresses', [AdresseController::class, 'index']);
-    Route::get('/adresses/{adresse}', [AdresseController::class, 'show']);
-    Route::post('/adresses', [AdresseController::class, 'store']);
-    Route::put('/adresses/{adresse}', [AdresseController::class, 'update']);
-    Route::delete('/adresses/{adresse}', [AdresseController::class, 'destroy']);
-    //Personnels
-    Route::get('/personnels', [PersonnelController::class, 'index']);
-    Route::post('/personnels', [PersonnelController::class, 'store']);
-    Route::get('/personnels/{personnel}', [PersonnelController::class, 'show']);
-    Route::put('/personnels/{personnel}', [PersonnelController::class, 'update']);
-    Route::delete('/personnels/{personnel}', [PersonnelController::class, 'destroy']);
+    Route::prefix('/sous-categories')->group(function () {
+        Route::post('/', [SousCategorieController::class, 'store']);
+        Route::put('/{sousCategorie}', [SousCategorieController::class, 'update']);
+        Route::delete('/{sousCategorie}', [SousCategorieController::class, 'destroy']);
+    });
+
+    // Profil
+    Route::prefix('/profil')->group(function () {
+        Route::get('/', [ProfilController::class, 'show']);
+        Route::put('/', [ProfilController::class, 'update']);
+        Route::put('/password', [ProfilController::class, 'updatePassword']);
+        Route::delete('/', [ProfilController::class, 'destroy']);
+    });
+
+    // Adresses
+    Route::prefix('/adresses')->group(function () {
+        Route::get('/', [AdresseController::class, 'index']);
+        Route::get('/{adresse}', [AdresseController::class, 'show']);
+        Route::post('/', [AdresseController::class, 'store']);
+        Route::put('/{adresse}', [AdresseController::class, 'update']);
+        Route::delete('/{adresse}', [AdresseController::class, 'destroy']);
+    });
+
+    // Personnels
+    Route::prefix('/personnels')->group(function () {
+        Route::get('/', [PersonnelController::class, 'index']);
+        Route::post('/', [PersonnelController::class, 'store']);
+        Route::get('/{personnel}', [PersonnelController::class, 'show']);
+        Route::put('/{personnel}', [PersonnelController::class, 'update']);
+        Route::delete('/{personnel}', [PersonnelController::class, 'destroy']);
+    });
+
     // Gestion des administrateurs (superadmin seulement)
-    Route::get('/admins', [UtilisateurController::class, 'index']);
-    Route::post('/admins', [UtilisateurController::class, 'store']);
-    Route::get('/admins/{user}', [UtilisateurController::class, 'show']);
-    Route::put('/admins/{user}', [UtilisateurController::class, 'update']);
-    Route::delete('/admins/{user}', [UtilisateurController::class, 'destroy']);
+    Route::prefix('/admins')->group(function () {
+        Route::get('/', [UtilisateurController::class, 'index']);
+        Route::post('/', [UtilisateurController::class, 'store']);
+        Route::get('/{user}', [UtilisateurController::class, 'show']);
+        Route::put('/{user}', [UtilisateurController::class, 'update']);
+        Route::delete('/{user}', [UtilisateurController::class, 'destroy']);
+    });
 
     // Transformer un user en admin
     Route::put('/users/{user}/make-admin', [UtilisateurController::class, 'makeAdmin']);
 
     // Rétrograder un admin en user
     Route::put('/users/{user}/make-user', [UtilisateurController::class, 'makeUser']);
+
+    // Gestion des CodePromos (superadmins et admins)
+    Route::prefix('/codepromos')->group(function () {
+        Route::get('/', [CodePromoController::class, 'index']);
+        Route::post('/', [CodePromoController::class, 'store']);
+        Route::delete('/{codepromo}', [CodePromoController::class, 'destroy']);
+    });
 
 
 
