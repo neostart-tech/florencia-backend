@@ -7,6 +7,7 @@ use App\Http\Controllers\admin\utilisateurs\UtilisateurController;
 use App\Http\Controllers\categories\CategorieController;
 use App\Http\Controllers\personnels\PersonnelController;
 use App\Http\Controllers\profil\ProfilController;
+use App\Http\Controllers\services\ServiceController;
 use App\Http\Controllers\sousCategories\SousCategorieController;
 use App\Http\Controllers\adresses\AdresseController;
 use App\Http\Controllers\users\AuthController as AuthUser;
@@ -46,6 +47,9 @@ Route::get('/categories/{categorie}', [CategorieController::class, 'show']);
 // SousCategories
 Route::get('/sous-categories', [SousCategorieController::class, 'index']);
 Route::get('/sous-categories/{sousCategorie}', [SousCategorieController::class, 'show']);
+// Services
+Route::get('/services', [ServiceController::class, 'index']);
+Route::get('/services/{service}', [ServiceController::class, 'show']);
 
 
 // Route::prefix('admin')->group(function () {
@@ -105,6 +109,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{personnel}', [PersonnelController::class, 'show']);
         Route::put('/{personnel}', [PersonnelController::class, 'update']);
         Route::delete('/{personnel}', [PersonnelController::class, 'destroy']);
+    });
+
+    // Services
+    Route::prefix('/services')->group(function () {
+        Route::post('/', [ServiceController::class, 'store']);
+        Route::put('/{service}', [ServiceController::class, 'update']);
+        Route::delete('/{service}', [ServiceController::class, 'destroy']);
     });
 
     // Gestion des administrateurs (superadmin seulement)
