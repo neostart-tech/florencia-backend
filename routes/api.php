@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\AuthController as AuthAdmin;
 use App\Http\Controllers\admin\codepromos\CodePromoController;
 use App\Http\Controllers\admin\fidelites\FideliteController;
 use App\Http\Controllers\admin\utilisateurs\UtilisateurController;
+use App\Http\Controllers\articles\ArticleController;
 use App\Http\Controllers\categories\CategorieController;
 use App\Http\Controllers\personnels\PersonnelController;
 use App\Http\Controllers\profil\ProfilController;
@@ -50,6 +51,9 @@ Route::get('/sous-categories/{sousCategorie}', [SousCategorieController::class, 
 // Services
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/services/{service}', [ServiceController::class, 'show']);
+// Articles
+Route::get('/articles', [ArticleController::class, 'index']);
+Route::get('/articles/{article}', [ArticleController::class, 'show']);
 
 
 // Route::prefix('admin')->group(function () {
@@ -116,6 +120,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [ServiceController::class, 'store']);
         Route::put('/{service}', [ServiceController::class, 'update']);
         Route::delete('/{service}', [ServiceController::class, 'destroy']);
+    });
+
+    // Articles
+    Route::prefix('/articles')->group(function () {
+        Route::post('/', [ArticleController::class, 'store']);
+        Route::put('/{article}', [ArticleController::class, 'update']);
+        Route::delete('/{article}', [ArticleController::class, 'destroy']);
     });
 
     // Gestion des administrateurs (superadmin seulement)
