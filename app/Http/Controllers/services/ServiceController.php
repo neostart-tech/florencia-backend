@@ -27,17 +27,22 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $services = Service::latest()->get();
+        $services = Service::with(['images', 'reservations'])->latest()->get();
+
         return ServiceResource::collection($services);
     }
+
 
     /**
      * Détails d'un service
      */
     public function show(Service $service)
     {
+        $service->load(['images', 'reservations']);
+
         return new ServiceResource($service);
     }
+
 
     /**
      * Création d'un service (admin seulement)
@@ -48,8 +53,10 @@ class ServiceController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
+            'type' => 'required|in:simple,pack',
             'duree' => 'required|integer|min:1',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
         if ($validator->fails()) {
@@ -60,9 +67,20 @@ class ServiceController extends Controller
 
         $service = Service::create($validator->validated());
 
+        // Sauvegarde des images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('services', 'public');
+
+                $service->images()->create([
+                    'path' => $path
+                ]);
+            }
+        }
+
         return response()->json([
             'message' => 'Service créé avec succès',
-            'data' => new ServiceResource($service)
+            'data' => new ServiceResource($service->load(['images', 'reservations']))
         ], 201);
     }
 
@@ -75,8 +93,10 @@ class ServiceController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nom' => 'sometimes|string|max:255',
-            'type' => 'sometimes|string|max:255',
+            'type' => 'sometimes|in:simple,pack',
             'duree' => 'sometimes|integer|min:1',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
         if ($validator->fails()) {
@@ -87,9 +107,19 @@ class ServiceController extends Controller
 
         $service->update($validator->validated());
 
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('services', 'public');
+
+                $service->images()->create([
+                    'path' => $path
+                ]);
+            }
+        }
+
         return response()->json([
             'message' => 'Service modifié avec succès',
-            'data' => new ServiceResource($service)
+            'data' => new ServiceResource($service->load(['images', 'reservations']))
         ]);
     }
 
@@ -100,7 +130,13 @@ class ServiceController extends Controller
     {
         $this->checkAdmin();
 
+        foreach ($service->images as $image) {
+            \Storage::disk('public')->delete($image->path);
+            $image->delete();
+        }
+
         $service->delete();
+
 
         return response()->json([
             'message' => 'Service supprimé avec succès'
