@@ -15,8 +15,16 @@ class ServiceResource extends JsonResource
             'type' => $this->type,
             'duree' => $this->duree,
 
+            'images' => $this->whenLoaded('images', function () {
+                return $this->images->map(function ($img) {
+                    return [
+                        'id' => $img->id,
+                        'url' => asset('storage/' . $img->path),
+                    ];
+                });
+            }),
+
             'reservations' => $this->whenLoaded('reservations'),
-            'images' => $this->whenLoaded('images'),
 
             'created_at' => $this->created_at,
         ];

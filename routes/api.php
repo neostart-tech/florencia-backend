@@ -4,12 +4,14 @@ use App\Http\Controllers\admin\AuthController as AuthAdmin;
 use App\Http\Controllers\admin\codepromos\CodePromoController;
 use App\Http\Controllers\admin\fidelites\FideliteController;
 use App\Http\Controllers\admin\utilisateurs\UtilisateurController;
+use App\Http\Controllers\articles\ArticleController;
 use App\Http\Controllers\categories\CategorieController;
 use App\Http\Controllers\personnels\PersonnelController;
 use App\Http\Controllers\profil\ProfilController;
 use App\Http\Controllers\services\ServiceController;
 use App\Http\Controllers\sousCategories\SousCategorieController;
 use App\Http\Controllers\adresses\AdresseController;
+use App\Http\Controllers\stocks\StockController;
 use App\Http\Controllers\users\AuthController as AuthUser;
 use App\Http\Controllers\variantes\VarianteController;
 use Illuminate\Http\Request;
@@ -50,6 +52,12 @@ Route::get('/sous-categories/{sousCategorie}', [SousCategorieController::class, 
 // Services
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/services/{service}', [ServiceController::class, 'show']);
+// Articles
+Route::get('/articles', [ArticleController::class, 'index']);
+Route::get('/articles/{article}', [ArticleController::class, 'show']);
+// Stocks
+Route::get('/stocks', [StockController::class, 'index']);
+Route::get('/stocks/{article}', [StockController::class, 'show']);
 
 
 // Route::prefix('admin')->group(function () {
@@ -117,6 +125,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{service}', [ServiceController::class, 'update']);
         Route::delete('/{service}', [ServiceController::class, 'destroy']);
     });
+
+    // Articles
+    Route::prefix('/articles')->group(function () {
+        Route::post('/', [ArticleController::class, 'store']);
+        Route::put('/{article}', [ArticleController::class, 'update']);
+        Route::delete('/{article}', [ArticleController::class, 'destroy']);
+    });
+
+    // Gestion du stock
+    Route::prefix('/stocks')->group(function () {
+        Route::get('/{article}/mouvements', [StockController::class, 'mouvements']);
+        Route::post('/mouvement', [StockController::class, 'store']);
+    });
+
 
     // Gestion des administrateurs (superadmin seulement)
     Route::prefix('/admins')->group(function () {
