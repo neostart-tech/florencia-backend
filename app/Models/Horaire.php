@@ -9,7 +9,7 @@ class Horaire extends Model
 {
     use HasUuid;
 
-    protected $fillable = ['heure_debut', 'heure_fin', 'nbre_clients', 'jour_id', 'calendrier_id'];
+    protected $fillable = ['heure_debut', 'heure_fin', 'nbre_clients', 'jour_id', 'calendrier_id', 'service_id'];
 
     public function jour()
     {
@@ -26,5 +26,10 @@ class Horaire extends Model
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 }

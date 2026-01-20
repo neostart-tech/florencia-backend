@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->integer('nbre_clients');
             $table->foreignUuid('jour_id')->constrained('jours');
             $table->foreignUuid('calendrier_id')->constrained('calendriers');
+            $table->foreignUuid('service_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

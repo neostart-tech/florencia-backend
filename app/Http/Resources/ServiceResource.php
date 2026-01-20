@@ -25,6 +25,7 @@ class ServiceResource extends JsonResource
             }),
 
             'reservations' => $this->whenLoaded('reservations'),
+            'horaires' => $this->whenLoaded('horaires'),
 
             'created_at' => $this->created_at,
         ];
