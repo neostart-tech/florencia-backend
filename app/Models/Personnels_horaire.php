@@ -13,6 +13,7 @@ class Personnels_horaire extends Model
     protected $fillable = [
         'personnel_id',
         'horaire_id',
+        'service_id',
     ];
 
     public function personnel()

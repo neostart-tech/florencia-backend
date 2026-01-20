@@ -60,12 +60,6 @@ Route::get('/stocks', [StockController::class, 'index']);
 Route::get('/stocks/{article}', [StockController::class, 'show']);
 
 
-// Route::prefix('admin')->group(function () {
-
-// })->middleware('auth:sanctum');
-
-
-
 /*
      Routes necessitant l'authentification
  */

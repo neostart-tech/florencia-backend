@@ -14,6 +14,7 @@ class PersonnelHoraireResource extends JsonResource
 
             'personnel' => $this->whenLoaded('personnel'),
             'horaire' => $this->whenLoaded('horaire'),
+            'service' => $this->whenLoaded('service'),
 
             'created_at' => $this->created_at,
         ];

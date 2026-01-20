@@ -19,4 +19,10 @@ class Service extends Model
     {
         return $this->morphMany(Image::class, 'owner');
     }
+
+    public function personnels()
+    {
+        return $this->belongsToMany(Personnel::class, 'personnel_horaires');
+    }
+
 }
