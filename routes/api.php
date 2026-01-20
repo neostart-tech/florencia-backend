@@ -5,7 +5,9 @@ use App\Http\Controllers\admin\codepromos\CodePromoController;
 use App\Http\Controllers\admin\fidelites\FideliteController;
 use App\Http\Controllers\admin\utilisateurs\UtilisateurController;
 use App\Http\Controllers\articles\ArticleController;
+use App\Http\Controllers\calendriers\CalendrierController;
 use App\Http\Controllers\categories\CategorieController;
+use App\Http\Controllers\horaires\HoraireController;
 use App\Http\Controllers\personnels\PersonnelController;
 use App\Http\Controllers\profil\ProfilController;
 use App\Http\Controllers\services\ServiceController;
@@ -58,6 +60,12 @@ Route::get('/articles/{article}', [ArticleController::class, 'show']);
 // Stocks
 Route::get('/stocks', [StockController::class, 'index']);
 Route::get('/stocks/{article}', [StockController::class, 'show']);
+// Calendriers
+Route::get('/calendriers', [CalendrierController::class, 'index']);
+Route::get('/calendriers/{calendrier}', [CalendrierController::class, 'show']);
+// Horaires
+Route::get('/horaires', [HoraireController::class, 'index']);
+Route::get('/horaires/{horaire}', [HoraireController::class, 'show']);
 
 
 /*
@@ -131,6 +139,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/stocks')->group(function () {
         Route::get('/{article}/mouvements', [StockController::class, 'mouvements']);
         Route::post('/mouvement', [StockController::class, 'store']);
+    });
+
+    // Calendriers
+    Route::prefix('/calendriers')->group(function () {
+        Route::post('/', [CalendrierController::class, 'store']);
+        Route::put('/{calendrier}', [CalendrierController::class, 'update']);
+        Route::delete('/{calendrier}', [CalendrierController::class, 'destroy']);
+    });
+
+    // Gestion des horaires
+    Route::prefix('/horaires')->group(function () {
+        Route::post('/', [HoraireController::class, 'store']);
+        Route::put('/{horaire}', [HoraireController::class, 'update']);
+        Route::delete('/{horaire}', [HoraireController::class, 'destroy']);
     });
 
 
