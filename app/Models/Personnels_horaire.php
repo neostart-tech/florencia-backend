@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasUuid;
 
 class Personnels_horaire extends Model
 {
-    use HasUuid;
 
 
     protected $fillable = [

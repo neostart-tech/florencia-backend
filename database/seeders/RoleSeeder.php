@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
         $roles = ['superadmin', 'admin', 'user'];
 
         foreach ($roles as $role) {
-            Role::create([
+            Role::updateOrCreate([
                 'id' => (string) Str::uuid(),
                 'role' => $role,
             ]);

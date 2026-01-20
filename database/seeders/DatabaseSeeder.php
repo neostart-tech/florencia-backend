@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RoleSeeder::class,
-            SuperAdminSeeder::class
+            SuperAdminSeeder::class,
+            JourSeeder::class
         ]);
 
     }
