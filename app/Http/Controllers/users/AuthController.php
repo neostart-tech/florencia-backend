@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\users;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Welcome;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Password;
@@ -41,8 +43,8 @@ class AuthController extends Controller
             'role_id' => $role->id,
         ]);
 
-        // Envoyer email de verification
-        // event(new Registered($user));
+        // Envoyer l'email de bienvenue
+        Mail::to($user->email)->send(new Welcome($user));
 
         return response()->json([
             'message' => 'Utilisateur créé avec succès.',
@@ -136,7 +138,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|exists:users,email',
             'token' => 'required|string',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {

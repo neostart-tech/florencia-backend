@@ -42,6 +42,21 @@ class UtilisateurController extends Controller
     }
 
     /**
+     * Récupérer tous les utilisateurs
+     */
+    public function allUsers()
+    {
+        $user = auth()->user();
+
+        if (!$user || $user->role->role === 'user') {
+            abort(403, 'Accès refusé');
+        }
+
+        $users = User::with('role', 'commandes')->latest()->get();
+        return UserResource::collection($users);
+    }
+
+    /**
      * Créer un admin (rôle forcé à admin)
      */
     public function store(Request $request)
@@ -52,7 +67,7 @@ class UtilisateurController extends Controller
             'nom' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'tel' => 'nullable|string|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8',
         ]);
 
         if ($validator->fails()) {
@@ -97,7 +112,7 @@ class UtilisateurController extends Controller
             'nom' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
             'tel' => 'sometimes|string|unique:users,tel,' . $user->id,
-            'password' => 'nullable|string|min:6',
+            'password' => 'nullable|string|min:8',
         ]);
 
         if ($validator->fails()) {
