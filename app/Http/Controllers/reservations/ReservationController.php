@@ -10,23 +10,16 @@ use Illuminate\Support\Str;
 
 class ReservationController extends Controller
 {
-    private function isUser()
-    {
-        return auth()->user()->role->role === 'user';
-    }
 
     // Liste
     public function index()
     {
         $user = auth()->user();
 
-        if ($this->isUser()) {
-            return Reservation::with(['service', 'horaire'])
-                ->where('user_id', $user->id)
-                ->latest()->get();
-        }
 
-        return Reservation::with(['service', 'horaire', 'user'])->latest()->get();
+        return Reservation::with(['service', 'horaire'])
+            ->where('user_id', $user->id)
+            ->latest()->get();
     }
 
     // Voir
@@ -34,9 +27,7 @@ class ReservationController extends Controller
     {
         $user = auth()->user();
 
-        if ($this->isUser() && $reservation->user_id !== $user->id) {
-            abort(403);
-        }
+
 
         return $reservation->load(['service', 'horaire', 'paiement']);
     }
@@ -86,14 +77,14 @@ class ReservationController extends Controller
         ], 201);
     }
 
-    // Suppression (ADMIN)
-    public function destroy(Reservation $reservation)
-    {
-        if ($this->isUser())
-            abort(403);
+    // // Suppression (ADMIN)
+    // public function destroy(Reservation $reservation)
+    // {
+    //     if ($this->isUser())
+    //         abort(403);
 
-        $reservation->delete();
+    //     $reservation->delete();
 
-        return response()->json(['message' => 'Réservation supprimée']);
-    }
+    //     return response()->json(['message' => 'Réservation supprimée']);
+    // }
 }

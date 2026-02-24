@@ -3,48 +3,91 @@
 namespace App\Http\Controllers\personnels;
 
 use App\Http\Controllers\Controller;
-use App\Models\Personnel;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\PersonnelResource;
+use Illuminate\Support\Str;
 
 class PersonnelController extends Controller
 {
     /**
-     * Vérifie si l'utilisateur est admin
+     * Vérifie admin
      */
     private function checkAdmin()
     {
         $user = auth()->user();
 
-        if (!$user || $user->role->role === 'user') {
+        if (
+            !$user ||
+            !in_array($user->role->role, ['admin', 'superadmin'])
+        ) {
             abort(403, 'Accès refusé');
         }
     }
 
     /**
-     * Liste du personnel
+     * Récupère role autorisé
      */
-    public function index()
+    private function getRole(string $roleName): Role
     {
-        $this->checkAdmin();
+        if (!in_array($roleName, ['personnel', 'caissier'])) {
+            abort(400, 'Rôle invalide');
+        }
 
-        $personnels = Personnel::latest()->get();
-        return PersonnelResource::collection($personnels);
+        return Role::where('role', $roleName)->firstOrFail();
+    }
+
+    private function resolveRole(Request $request): Role
+    {
+        $prefix = $request->route()->getPrefix();
+
+        if (str_contains($prefix, 'personnels')) {
+            $roleName = 'personnel';
+        } elseif (str_contains($prefix, 'caissiers')) {
+            $roleName = 'caissier';
+        } else {
+            abort(400, 'Type utilisateur invalide');
+        }
+
+        return Role::where('role', $roleName)->firstOrFail();
     }
 
     /**
-     * Ajouter un membre du personnel
+     * Liste personnel / caissier
+     */
+    public function index(Request $request)
+    {
+        $this->checkAdmin();
+
+        $role = $this->resolveRole($request);
+
+        $role = $this->getRole($request->role);
+
+        $users = User::where('role_id', $role->id)
+            ->latest()
+            ->get();
+
+        return response()->json($users);
+    }
+
+    /**
+     * Création personnel / caissier
      */
     public function store(Request $request)
     {
         $this->checkAdmin();
 
+        $role = $this->resolveRole($request);
+
+        $role = $this->getRole($request->role);
+
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'tel' => 'required|string|max:20|unique:personnels',
-            'email' => 'required|string|email|max:255|unique:personnels',
+            'email' => 'required|email|unique:users,email',
+            'tel' => 'nullable|string|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -53,36 +96,62 @@ class PersonnelController extends Controller
             ], 422);
         }
 
-        $personnel = Personnel::create($validator->validated());
+        $plainPassword = Str::random(10);
+
+        $user = User::create([
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'email' => $request->email,
+            'tel' => $request->tel,
+            'password' => Hash::make($plainPassword),
+            'role_id' => $role->id,
+        ]);
 
         return response()->json([
-            'message' => 'Personnel ajouté avec succès',
-            'data' => new PersonnelResource($personnel)
+            'message' => ucfirst($role->role) . ' créé avec succès',
+            'password_temporaire' => $plainPassword,
+            'data' => $user
         ], 201);
     }
 
     /**
-     * Détails d'un membre
+     * Détails
      */
-    public function show(Personnel $personnel)
+    public function show(Request $request, $id)
     {
         $this->checkAdmin();
 
-        return new PersonnelResource($personnel);
+        $role = $this->resolveRole($request);
+
+        $role = $this->getRole($request->role);
+
+        $user = User::where('id', $id)
+            ->where('role_id', $role->id)
+            ->firstOrFail();
+
+        return response()->json($user);
     }
 
     /**
-     * Mise à jour
+     * Update
      */
-    public function update(Request $request, Personnel $personnel)
+    public function update(Request $request, $id)
     {
         $this->checkAdmin();
+
+        $role = $this->resolveRole($request);
+
+        $role = $this->getRole($request->role);
+
+        $user = User::where('id', $id)
+            ->where('role_id', $role->id)
+            ->firstOrFail();
 
         $validator = Validator::make($request->all(), [
             'nom' => 'sometimes|string|max:255',
             'prenom' => 'sometimes|string|max:255',
-            'tel' => 'sometimes|string|max:20|unique:personnels,tel,' . $personnel->id,
-            'email' => 'sometimes|email|unique:personnels,email,' . $personnel->id,
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+            'tel' => 'sometimes|string|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -91,25 +160,33 @@ class PersonnelController extends Controller
             ], 422);
         }
 
-        $personnel->update($validator->validated());
+        $user->update($validator->validated());
 
         return response()->json([
-            'message' => 'Personnel modifié avec succès',
-            'data' => new PersonnelResource($personnel)
+            'message' => ucfirst($role->role) . ' modifié avec succès',
+            'data' => $user
         ]);
     }
 
     /**
      * Suppression
      */
-    public function destroy(Personnel $personnel)
+    public function destroy(Request $request, $id)
     {
         $this->checkAdmin();
 
-        $personnel->delete();
+        $role = $this->resolveRole($request);
+
+        $role = $this->getRole($request->role);
+
+        $user = User::where('id', $id)
+            ->where('role_id', $role->id)
+            ->firstOrFail();
+
+        $user->delete();
 
         return response()->json([
-            'message' => 'Personnel supprimé avec succès'
+            'message' => ucfirst($role->role) . ' supprimé avec succès'
         ]);
     }
 }

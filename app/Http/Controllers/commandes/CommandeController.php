@@ -13,21 +13,16 @@ use Illuminate\Support\Str;
 
 class CommandeController extends Controller
 {
-    private function isUser()
-    {
-        return auth()->user()->role->role === 'user';
-    }
 
     // Liste
     public function index()
     {
         $user = auth()->user();
 
-        if ($this->isUser()) {
-            return Commande::with('details.article')
-                ->where('user_id', $user->id)
-                ->latest()->get();
-        }
+
+        return Commande::with('details.article')
+            ->where('user_id', $user->id)
+            ->latest()->get();
 
         return Commande::with('details.article', 'user')->latest()->get();
     }
@@ -37,8 +32,8 @@ class CommandeController extends Controller
     {
         $user = auth()->user();
 
-        if ($this->isUser() && $commande->user_id !== $user->id) {
-            abort(403, 'Accès refusé');
+        if ($commande->user_id !== $user->id) {
+            abort(403);
         }
 
         return $commande->load('details.article', 'paiements');
@@ -110,13 +105,13 @@ class CommandeController extends Controller
     }
 
     // Suppression (ADMIN)
-    public function destroy(Commande $commande)
-    {
-        if ($this->isUser())
-            abort(403);
+    // public function destroy(Commande $commande)
+    // {
+    //     if ($this->isUser())
+    //         abort(403);
 
-        $commande->delete();
+    //     $commande->delete();
 
-        return response()->json(['message' => 'Commande supprimée']);
-    }
+    //     return response()->json(['message' => 'Commande supprimée']);
+    // }
 }
