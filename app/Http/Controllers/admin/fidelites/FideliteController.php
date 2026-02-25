@@ -18,7 +18,10 @@ class FideliteController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user || $user->role->role === 'user') {
+        if (
+            !$user ||
+            !in_array($user->role->role, ['admin', 'superadmin'])
+        ) {
             abort(403, 'Accès refusé');
         }
     }

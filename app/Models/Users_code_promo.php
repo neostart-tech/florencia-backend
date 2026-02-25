@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\HasUuid;
 
 class Users_code_promo extends Model
 {
-    use HasUuid;
 
 
     protected $fillable = [

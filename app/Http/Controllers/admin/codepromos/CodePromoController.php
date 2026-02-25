@@ -13,12 +13,15 @@ class CodePromoController extends Controller
     /**
      * Vérifie si l'utilisateur n'est pas un simple user
      */
-    private function checkNotUser()
+    private function checkAdmin()
     {
         $user = auth()->user();
 
-        if (!$user || $user->role->role === 'user') {
-            abort(403, "Accès refusé");
+        if (
+            !$user ||
+            !in_array($user->role->role, ['admin', 'superadmin'])
+        ) {
+            abort(403, 'Accès refusé');
         }
     }
 
@@ -27,7 +30,7 @@ class CodePromoController extends Controller
      */
     public function index()
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         return response()->json(Code_promo::latest()->get());
     }
@@ -51,7 +54,7 @@ class CodePromoController extends Controller
      */
     public function store(Request $request)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         $validator = Validator::make($request->all(), [
             'date_debut' => 'required|date',
@@ -85,7 +88,7 @@ class CodePromoController extends Controller
      */
     public function show(Code_promo $codepromo)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         return new CodePromoResource($codepromo);
     }
@@ -97,7 +100,7 @@ class CodePromoController extends Controller
      */
     public function destroy(Code_promo $codepromo)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         $codepromo->delete();
 

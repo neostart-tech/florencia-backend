@@ -112,13 +112,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{adresse}', [AdresseController::class, 'destroy']);
     });
 
-    // Personnels
+    // PERSONNELS
     Route::prefix('/personnels')->group(function () {
         Route::get('/', [PersonnelController::class, 'index']);
         Route::post('/', [PersonnelController::class, 'store']);
-        Route::get('/{personnel}', [PersonnelController::class, 'show']);
-        Route::put('/{personnel}', [PersonnelController::class, 'update']);
-        Route::delete('/{personnel}', [PersonnelController::class, 'destroy']);
+        Route::get('/{id}', [PersonnelController::class, 'show']);
+        Route::put('/{id}', [PersonnelController::class, 'update']);
+        Route::delete('/{id}', [PersonnelController::class, 'destroy']);
+    });
+
+    // CAISSIERS
+    Route::prefix('/caissiers')->group(function () {
+        Route::get('/', [PersonnelController::class, 'index']);
+        Route::post('/', [PersonnelController::class, 'store']);
+        Route::get('/{id}', [PersonnelController::class, 'show']);
+        Route::put('/{id}', [PersonnelController::class, 'update']);
+        Route::delete('/{id}', [PersonnelController::class, 'destroy']);
     });
 
     // Services
@@ -156,9 +165,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    // Gestion des administrateurs (superadmin seulement)
+    // Gestion des utilisateurs et administrateurs
     Route::prefix('/admins')->group(function () {
         Route::get('/', [UtilisateurController::class, 'index']);
+        Route::get('/all-users', [UtilisateurController::class, 'allUsers']);// Admins et superadmins
         Route::post('/', [UtilisateurController::class, 'store']);
         Route::get('/{user}', [UtilisateurController::class, 'show']);
         Route::put('/{user}', [UtilisateurController::class, 'update']);

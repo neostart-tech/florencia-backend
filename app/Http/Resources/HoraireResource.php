@@ -17,7 +17,6 @@ class HoraireResource extends JsonResource
 
             'jour' => $this->whenLoaded('jour'),
             'calendrier' => $this->whenLoaded('calendrier'),
-            'personnels' => $this->whenLoaded('personnels'),
             'service' => $this->whenLoaded('service'),
             'reservations' => $this->whenLoaded('reservations'),
 

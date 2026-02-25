@@ -11,27 +11,31 @@ use Illuminate\Support\Facades\Validator;
 
 class HoraireController extends Controller
 {
-    private function checkNotUser()
+    private function checkAdmin()
     {
         $user = auth()->user();
-        if (!$user || $user->role->role === 'user') {
+
+        if (
+            !$user ||
+            !in_array($user->role->role, ['admin', 'superadmin'])
+        ) {
             abort(403, 'Accès refusé');
         }
     }
 
     public function index()
     {
-        return Horaire::with(['jour', 'service', 'personnels', 'calendrier'])->get();
+        return Horaire::with(['jour', 'service', 'calendrier'])->get();
     }
 
     public function show(Horaire $horaire)
     {
-        return $horaire->load(['jour', 'service', 'personnels', 'calendrier']);
+        return $horaire->load(['jour', 'service', 'calendrier']);
     }
 
     public function store(Request $request)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         $validator = Validator::make($request->all(), [
             'jour_numero' => 'required|integer|min:1|max:7',
@@ -40,8 +44,6 @@ class HoraireController extends Controller
             'nbre_clients' => 'required|integer|min:1',
             'calendrier_id' => 'required|exists:calendriers,id',
             'service_id' => 'required|exists:services,id',
-            'personnels' => 'required|array|min:1',
-            'personnels.*' => 'exists:personnels,id',
         ]);
 
         if ($validator->fails()) {
@@ -65,18 +67,16 @@ class HoraireController extends Controller
             'service_id' => $request->service_id,
         ]);
 
-        // Attacher les personnels
-        $horaire->personnels()->sync($request->personnels);
 
         return response()->json([
             'message' => 'Horaire créé avec succès',
-            'data' => $horaire->load(['jour', 'service', 'personnels', 'calendrier'])
+            'data' => $horaire->load(['jour', 'service', 'calendrier'])
         ], 201);
     }
 
     public function update(Request $request, Horaire $horaire)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         $validator = Validator::make($request->all(), [
             'jour_numero' => 'sometimes|integer|min:1|max:7',
@@ -84,8 +84,6 @@ class HoraireController extends Controller
             'heure_fin' => 'sometimes|after:heure_debut',
             'nbre_clients' => 'sometimes|integer|min:1',
             'service_id' => 'sometimes|exists:services,id',
-            'personnels' => 'sometimes|array',
-            'personnels.*' => 'exists:personnels,id',
         ]);
 
         if ($validator->fails()) {
@@ -104,22 +102,18 @@ class HoraireController extends Controller
             unset($data['jour_numero']);
         }
 
-        // Si on change les personnels
-        if ($request->has('personnels')) {
-            $horaire->personnels()->sync($request->personnels);
-        }
 
         $horaire->update($data);
 
         return response()->json([
             'message' => 'Horaire mis à jour',
-            'data' => $horaire->load(['jour', 'service', 'personnels', 'calendrier'])
+            'data' => $horaire->load(['jour', 'service', 'calendrier'])
         ]);
     }
 
     public function destroy(Horaire $horaire)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
         $horaire->delete();
 
         return response()->json(['message' => 'Horaire supprimé']);

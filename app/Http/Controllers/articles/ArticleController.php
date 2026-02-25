@@ -17,13 +17,16 @@ class ArticleController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user || $user->role->role === 'user') {
+        if (
+            !$user ||
+            !in_array($user->role->role, ['admin', 'superadmin'])
+        ) {
             abort(403, 'Accès refusé');
         }
     }
 
     /**
-     * 📄 Liste des articles
+     *  Liste des articles
      */
     public function index()
     {
@@ -38,7 +41,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * 📄 Détail d'un article
+     *  Détail d'un article
      */
     public function show(Article $article)
     {
@@ -53,7 +56,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * ➕ Création d'article
+     *  Création d'article
      */
     public function store(Request $request)
     {
@@ -100,7 +103,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * ✏️ Modification d'article
+     *  Modification d'article
      */
     public function update(Request $request, Article $article)
     {
@@ -145,7 +148,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * 🗑️ Suppression d'article
+     *  Suppression d'article
      */
     public function destroy(Article $article)
     {

@@ -10,13 +10,13 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        $roles = ['superadmin', 'admin', 'user'];
+        $roles = ['superadmin', 'admin', 'user', 'personnel', 'caissier'];
 
         foreach ($roles as $role) {
-            Role::updateOrCreate([
-                'id' => (string) Str::uuid(),
-                'role' => $role,
-            ]);
+            Role::updateOrCreate(
+                ['role' => $role],
+                ['id' => (string) Str::uuid()]
+            );
         }
     }
 }

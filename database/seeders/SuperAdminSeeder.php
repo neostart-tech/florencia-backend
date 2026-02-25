@@ -34,7 +34,7 @@ class SuperAdminSeeder extends Seeder
             'nom' => 'Super Admin',
             'email' => 'admin@florencia.com',
             'tel' => '90000000',
-            'password' => Hash::make('Mot@de@passe'),
+            'password' => Hash::make('password'),
             'role_id' => $superAdminRole->id,
         ]);
 

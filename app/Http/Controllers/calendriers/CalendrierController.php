@@ -9,10 +9,14 @@ use Illuminate\Support\Facades\Validator;
 
 class CalendrierController extends Controller
 {
-    private function checkNotUser()
+    private function checkAdmin()
     {
         $user = auth()->user();
-        if (!$user || $user->role->role === 'user') {
+
+        if (
+            !$user ||
+            !in_array($user->role->role, ['admin', 'superadmin'])
+        ) {
             abort(403, 'Accès refusé');
         }
     }
@@ -29,7 +33,7 @@ class CalendrierController extends Controller
 
     public function store(Request $request)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         $validator = Validator::make($request->all(), [
             'debut' => 'required|date',
@@ -55,7 +59,7 @@ class CalendrierController extends Controller
 
     public function update(Request $request, Calendrier $calendrier)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         $validator = Validator::make($request->all(), [
             'debut' => 'sometimes|date',
@@ -80,7 +84,7 @@ class CalendrierController extends Controller
 
     public function destroy(Calendrier $calendrier)
     {
-        $this->checkNotUser();
+        $this->checkAdmin();
 
         $calendrier->delete();
 

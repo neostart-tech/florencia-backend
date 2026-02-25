@@ -19,10 +19,6 @@ class Horaire extends Model
     {
         return $this->belongsTo(Calendrier::class);
     }
-    public function personnels()
-    {
-        return $this->belongsToMany(Personnel::class, 'personnels_horaires');
-    }
     public function reservations()
     {
         return $this->hasMany(Reservation::class);

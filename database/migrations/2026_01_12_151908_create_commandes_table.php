@@ -5,16 +5,20 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(){
+    public function up()
+    {
         Schema::create('commandes', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('reference')->unique();
-            $table->decimal('prix_total',10,2);
-            $table->string('statut');
+            $table->decimal('prix_total', 10, 2);
+            $table->enum('statut', ['en_cours', 'termine']);
             $table->foreignUuid('user_id')->constrained('users');
             $table->timestamps();
         });
     }
-    public function down(){ Schema::dropIfExists('commandes'); }
+    public function down()
+    {
+        Schema::dropIfExists('commandes');
+    }
 };
 
