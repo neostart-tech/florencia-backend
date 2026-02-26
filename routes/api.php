@@ -15,7 +15,11 @@ use App\Http\Controllers\sousCategories\SousCategorieController;
 use App\Http\Controllers\adresses\AdresseController;
 use App\Http\Controllers\stocks\StockController;
 use App\Http\Controllers\users\AuthController as AuthUser;
+use App\Http\Controllers\admin\reservations\ReservationController;
+use App\Http\Controllers\admin\commandes\CommandeController;
 use App\Http\Controllers\variantes\VarianteController;
+use App\Http\Controllers\admin\crm\CrmController;
+use App\Http\Controllers\admin\analytics\AnalyticsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -30,14 +34,13 @@ use App\Models\User;
      Routes ne necessitant pas l'authentification
  */
 
-Route::prefix('admin')->group(function () {
-    Route::post('login', [AuthAdmin::class, 'login']);
-});
+Route::get('/ping', function() { return response()->json(['status' => 'ok']); });
+
+Route::post('admin/login', [AuthAdmin::class, 'login'])->name('login');
 
 Route::prefix('user')->group(function () {
     Route::post('login', [AuthUser::class, 'login']);
     Route::post('register', [AuthUser::class, 'register']);
-    // Route::post('verify-email', [AuthUser::class, 'verifyEmail']);
     Route::post('forgot-password', [AuthUser::class, 'forgotPassword']);
     Route::post('reset-password', [AuthUser::class, 'resetPassword']);
 });
@@ -73,6 +76,7 @@ Route::get('/horaires/{horaire}', [HoraireController::class, 'show']);
  */
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthAdmin::class, 'logout']);
 
     // Variantes
     Route::prefix('/variantes')->group(function () {
@@ -175,6 +179,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{user}', [UtilisateurController::class, 'destroy']);
     });
 
+    // Liste des clients (role=user) — utilisé pour la prise de RDV manuelle etc.
+    Route::get('/clients', [UtilisateurController::class, 'clients']);
+
     // Transformer un user en admin
     Route::put('/users/{user}/make-admin', [UtilisateurController::class, 'makeAdmin']);
 
@@ -195,6 +202,38 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{fidelite}', [FideliteController::class, 'show']);
         Route::post('/', [FideliteController::class, 'store']);
         Route::delete('/{fidelite}', [FideliteController::class, 'destroy']);
+    });
+
+    // Gestion des Commandes (admin)
+    Route::prefix('/commandes')->group(function () {
+        Route::get('/', [CommandeController::class, 'index']);
+        Route::get('/{commande}', [CommandeController::class, 'show']);
+        Route::put('/{commande}', [CommandeController::class, 'update']);
+        Route::delete('/{commande}', [CommandeController::class, 'destroy']);
+    });
+
+    // Gestion des Réservations (admin)
+    Route::prefix('/reservations')->group(function () {
+        Route::get('/', [ReservationController::class, 'index']);
+        Route::post('/', [ReservationController::class, 'store']);
+        Route::get('/{reservation}', [ReservationController::class, 'show']);
+        Route::delete('/{reservation}', [ReservationController::class, 'destroy']);
+    });
+
+    // CRM
+    Route::prefix('/crm')->group(function () {
+        Route::get('/customers', [CrmController::class, 'customers']);
+        Route::get('/customers/{user}/history', [CrmController::class, 'customerHistory']);
+        Route::get('/alerts/new-customers', [CrmController::class, 'newCustomerAlerts']);
+    });
+
+    // Analytics
+    Route::prefix('/analytics')->group(function () {
+        Route::get('/yields', [AnalyticsController::class, 'employeeYields']);
+        Route::get('/interventions', [AnalyticsController::class, 'allInterventions']);
+        Route::get('/employees/{personnel}/interventions', [AnalyticsController::class, 'employeeInterventions']);
+        Route::get('/alerts/payments', [AnalyticsController::class, 'paymentAlerts']);
+        Route::get('/reports/{type}', [AnalyticsController::class, 'periodicReport']);
     });
 
 

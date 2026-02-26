@@ -9,7 +9,7 @@ class Paiement extends Model
 {
     use HasUuid;
 
-    protected $fillable = ['moyen_paiement','reference_transaction','statut'];
+    protected $fillable = ['moyen_paiement', 'reference_transaction', 'status', 'montant'];
 
     public function owner()
     {

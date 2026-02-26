@@ -31,14 +31,27 @@ class UtilisateurController extends Controller
     {
         $this->checkSuperAdmin();
 
-        $adminRole = Role::where('role', 'admin')->firstOrFail();
+        $roles = Role::whereIn('role', ['admin', 'personnel', 'user'])->pluck('id');
 
-        $admins = User::whereIn('role_id', [$adminRole->id])
+        $users = User::whereIn('role_id', $roles)
             ->with('role')
             ->latest()
             ->get();
 
-        return UserResource::collection($admins);
+        return UserResource::collection($users);
+    }
+
+    /**
+     * Liste des clients uniquement (role=user)
+     */
+    public function clients()
+    {
+        $userRole = Role::where('role', 'user')->first();
+        if (!$userRole) {
+            return response()->json(['data' => []]);
+        }
+        $clients = User::where('role_id', $userRole->id)->with('role')->latest()->get();
+        return UserResource::collection($clients);
     }
 
     /**
@@ -68,25 +81,34 @@ class UtilisateurController extends Controller
             'email' => 'required|email|unique:users',
             'tel' => 'nullable|string|unique:users',
             'password' => 'required|string|min:8',
+            'role' => 'nullable|string|exists:roles,role',
+        ], [
+            'email.unique' => 'Cette adresse email est déjà utilisée.',
+            'tel.unique' => 'Ce numéro de téléphone est déjà utilisé.',
+            'role.exists' => 'Le rôle spécifié est invalide.',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        // Récupère le rôle admin
-        $adminRole = Role::where('role', 'admin')->firstOrFail();
+        // Récupère le rôle (par défaut admin si non spécifié)
+        $roleName = $request->input('role', 'admin');
+        $role = Role::where('role', $roleName)->firstOrFail();
 
         $user = User::create([
             'nom' => $request->nom,
             'email' => $request->email,
             'tel' => $request->tel,
             'password' => Hash::make($request->password),
-            'role_id' => $adminRole->id,
+            'role_id' => $role->id,
         ]);
 
         return response()->json([
-            'message' => 'Administrateur créé avec succès',
+            'message' => 'Utilisateur créé avec succès',
             'data' => new UserResource($user->load('role'))
         ], 201);
     }

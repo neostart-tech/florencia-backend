@@ -9,10 +9,11 @@ class Reservation extends Model
 {
     use HasUuid;
 
-    protected $fillable = ['code','service_id','horaire_id','user_id'];
+    protected $fillable = ['code','service_id','horaire_id','user_id', 'personnel_id'];
 
     public function user(){ return $this->belongsTo(User::class); }
     public function service(){ return $this->belongsTo(Service::class); }
     public function horaire(){ return $this->belongsTo(Horaire::class); }
+    public function personnel(){ return $this->belongsTo(Personnel::class); }
     public function paiements(){ return $this->morphMany(Paiement::class, 'owner'); }
 }

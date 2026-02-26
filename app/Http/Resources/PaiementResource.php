@@ -13,7 +13,7 @@ class PaiementResource extends JsonResource
             'id' => $this->id,
             'moyen_paiement' => $this->moyen_paiement,
             'reference_transaction' => $this->reference_transaction,
-            'statut' => $this->statut,
+            'status' => $this->status,
 
             // owner polymorphique
             'owner_type' => $this->owner_type,

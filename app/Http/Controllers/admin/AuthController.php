@@ -41,9 +41,9 @@ class AuthController extends Controller
         }
 
         // Vérifier le rôle
-        if (!in_array($user->role->role, ['admin', 'superadmin'])) {
+        if (!in_array($user->role->role, ['admin', 'superadmin', 'receptionnist'])) {
             return response()->json([
-                'message' => 'Accès refusé. Vous n\'êtes pas administrateur.'
+                'message' => 'Accès refusé. Vous n\'avez pas les permissions nécessaires.'
             ], 403);
         }
 
@@ -51,9 +51,18 @@ class AuthController extends Controller
         $token = $user->createToken('admin-token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Connexion admin réussie',
+            'message' => 'Connexion réussie',
             'token' => $token,
-            'user' => new UserResource($user),
+            'user' => new UserResource($user)
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Déconnexion réussie'
         ]);
     }
 }

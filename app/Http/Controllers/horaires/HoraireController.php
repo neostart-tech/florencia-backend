@@ -25,12 +25,12 @@ class HoraireController extends Controller
 
     public function index()
     {
-        return Horaire::with(['jour', 'service', 'calendrier'])->get();
+        return Horaire::with(['jour', 'service', 'personnels', 'calendrier', 'reservations.user'])->get();
     }
 
     public function show(Horaire $horaire)
     {
-        return $horaire->load(['jour', 'service', 'calendrier']);
+        return $horaire->load(['jour', 'service', 'personnels', 'calendrier', 'reservations.user']);
     }
 
     public function store(Request $request)
