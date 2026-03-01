@@ -13,21 +13,36 @@ use Illuminate\Support\Str;
 
 class CommandeController extends Controller
 {
-
-    // Liste
+    /**
+     * Liste des commandes de l'utilisateur connecté
+     */
     public function index()
     {
         $user = auth()->user();
 
-
-        return Commande::with('details.article')
-            ->where('user_id', $user->id)
-            ->latest()->get();
-
-        return Commande::with('details.article', 'user')->latest()->get();
+        return response()->json(
+            Commande::with('details.article')
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get()
+        );
     }
 
-    // Voir une commande
+    /**
+     * Liste de toutes les commandes (ADMIN)
+     */
+    public function allOrders()
+    {
+        return response()->json(
+            Commande::with('details.article', 'user', 'paiements')
+                ->latest()
+                ->get()
+        );
+    }
+
+    /**
+     * Détail d'une commande
+     */
     public function show(Commande $commande)
     {
         $user = auth()->user();
@@ -36,10 +51,14 @@ class CommandeController extends Controller
             abort(403);
         }
 
-        return $commande->load('details.article', 'paiements');
+        return response()->json(
+            $commande->load('details.article', 'paiements')
+        );
     }
 
-    // Créer commande (USER)
+    /**
+     * Créer une commande (USER)
+     */
     public function store(Request $request)
     {
         $user = auth()->user();
@@ -48,68 +67,103 @@ class CommandeController extends Controller
             'articles' => 'required|array|min:1',
             'articles.*.id' => 'required|exists:articles,id',
             'articles.*.quantite' => 'required|integer|min:1',
-            'code_promo' => 'nullable|string'
+            'code_promo' => 'nullable|string',
         ]);
 
-        DB::beginTransaction();
+        $commande = null;
 
-        try {
+        DB::transaction(function () use ($request, $user, &$commande) {
 
             $total = 0;
+            $lignes = [];
 
+            // Calcul du total
             foreach ($request->articles as $item) {
                 $article = Article::findOrFail($item['id']);
-                $total += $article->prix * $item['quantite'];
+
+                $prix = $article->prix_promo ?? $article->prix;
+                $total += $prix * $item['quantite'];
+
+                $lignes[] = [
+                    'article' => $article,
+                    'quantite' => $item['quantite'],
+                    'prix' => $prix,
+                ];
             }
 
-            // Code promo
+            // Application du code promo
             if ($request->code_promo) {
-                $code = Code_promo::where('code', $request->code_promo)->first();
+                $code = Code_promo::where('code', $request->code_promo)
+                    ->where('date_debut', '<=', now())
+                    ->where('date_fin', '>=', now())
+                    ->first();
 
-                if (!$code || !$user->codePromos->contains($code->id)) {
-                    return response()->json(['message' => 'Code promo invalide'], 403);
+                if (!$code) {
+                    throw new \Exception('Code promo invalide ou expiré');
+                }
+
+                if ($user->code_promos()->where('promo_id', $code->id)->exists()) {
+                    throw new \Exception('Vous avez déjà utilisé ce code promo');
                 }
 
                 $total -= ($total * $code->pourcentage / 100);
+                $total = round($total, 2);
+
+                // Enregistrer dans users_code_promos
+                $user->code_promos()->attach($code->id);
             }
 
+            // Création de la commande
             $commande = Commande::create([
                 'reference' => 'CMD-' . strtoupper(Str::random(8)),
-                'prix_total' => $total,
+                'prix_total' => round($total, 2),
                 'statut' => 'en_cours',
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
 
-            foreach ($request->articles as $item) {
-                $article = Article::findOrFail($item['id']);
-
+            // Création des détails
+            foreach ($lignes as $ligne) {
                 Commande_detail::create([
                     'commande_id' => $commande->id,
-                    'article_id' => $article->id,
-                    'quantite' => $item['quantite'],
-                    'prix_unitaire' => $article->prix
+                    'article_id' => $ligne['article']->id,
+                    'quantite' => $ligne['quantite'],
+                    'prix_unitaire' => $ligne['prix'],
                 ]);
             }
+        });
 
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Commande créée',
-                'commande' => $commande->load('details.article')
-            ], 201);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        return response()->json([
+            'message' => 'Commande créée avec succès',
+            'commande' => $commande->load('details.article'),
+        ], 201);
     }
 
-    // Suppression (ADMIN)
+    /**
+     * Marquer une commande comme traitée (ADMIN)
+     */
+    public function traiter(Commande $commande)
+    {
+        if (!in_array($commande->statut, ['termine'])) {
+            return response()->json([
+                'message' => 'La commande doit être terminée (payée) avant d\'être traitée'
+            ], 400);
+        }
+
+        $commande->update(['statut' => 'traite']);
+
+        return response()->json([
+            'message' => 'Commande traitée avec succès',
+            'commande' => $commande,
+        ]);
+    }
+
+
+
+    /**
+     * Suppression définitive (ADMIN)
+     */
     // public function destroy(Commande $commande)
     // {
-    //     if ($this->isUser())
-    //         abort(403);
-
     //     $commande->delete();
 
     //     return response()->json(['message' => 'Commande supprimée']);

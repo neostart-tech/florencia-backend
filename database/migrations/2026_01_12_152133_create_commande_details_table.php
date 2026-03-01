@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->decimal('prix_unitaire',10,2);
             $table->foreignUuid('article_id')->constrained('articles');
             $table->foreignUuid('commande_id')->constrained('commandes');
+            $table->timestamps();
         });
     }
     public function down(){ Schema::dropIfExists('commande_details'); }

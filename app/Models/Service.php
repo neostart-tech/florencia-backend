@@ -9,7 +9,7 @@ class Service extends Model
 {
     use HasUuid;
 
-    protected $fillable = ['nom', 'type', 'duree'];
+    protected $fillable = ['nom', 'type', 'prix', 'duree'];
 
     public function reservations()
     {

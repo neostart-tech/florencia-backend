@@ -10,20 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
-    /**
-     * Vérifie si l'utilisateur est admin ou superadmin
-     */
-    private function checkAdmin()
-    {
-        $user = auth()->user();
-
-        if (
-            !$user ||
-            !in_array($user->role->role, ['admin', 'superadmin'])
-        ) {
-            abort(403, 'Accès refusé');
-        }
-    }
+    
 
     /**
      *  Liste des articles
@@ -60,8 +47,6 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-
-        $this->checkAdmin();
 
         $request->validate([
             'nom' => 'required|string|max:255',
@@ -107,7 +92,6 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        $this->checkAdmin();
 
         $request->validate([
             'nom' => 'sometimes|required|string|max:255',
@@ -152,7 +136,6 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        $this->checkAdmin();
 
         // Supprimer les images physiques
         foreach ($article->images as $image) {

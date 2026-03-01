@@ -12,6 +12,7 @@ class ReservationResource extends JsonResource
         return [
             'id' => $this->id,
             'code' => $this->code,
+            'statut' => $this->statut,
 
             'user' => $this->whenLoaded('user'),
             'service' => $this->whenLoaded('service'),

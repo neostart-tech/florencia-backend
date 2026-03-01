@@ -9,7 +9,7 @@ class Reservation extends Model
 {
     use HasUuid;
 
-    protected $fillable = ['code','service_id','horaire_id','user_id'];
+    protected $fillable = ['code','statut','service_id','horaire_id','user_id','prix'];
 
     public function user(){ return $this->belongsTo(User::class); }
     public function service(){ return $this->belongsTo(Service::class); }

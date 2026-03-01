@@ -88,7 +88,7 @@ class CodePromoController extends Controller
      */
     public function show(Code_promo $codepromo)
     {
-        $this->checkAdmin();
+        // $this->checkAdmin();
 
         return new CodePromoResource($codepromo);
     }
