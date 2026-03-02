@@ -173,6 +173,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [PersonnelController::class, 'destroy']);
     })->middleware(IsAdminOrSuperAdmin::class);
 
+    // CAISSIERS
+    Route::prefix('/caissiers')->group(function () {
+        Route::get('/', [PersonnelController::class, 'index']);
+        Route::post('/', [PersonnelController::class, 'store']);
+        Route::get('/{id}', [PersonnelController::class, 'show']);
+        Route::put('/{id}', [PersonnelController::class, 'update']);
+        Route::delete('/{id}', [PersonnelController::class, 'destroy']);
+    })->middleware(IsAdminOrSuperAdmin::class);
+
     // Gestion des utilisateurs et administrateurs
     Route::prefix('/admins')->group(function () {
         Route::get('/all-users', [UtilisateurController::class, 'allUsers'])->middleware(IsAdminOrSuperAdmin::class);
